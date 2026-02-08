@@ -1,0 +1,16 @@
+# Backup files
+*.backup
+*.backup-*
+*~
+
+# Vim swap files
+*.swp
+*.swo
+*.swn
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Local machine-specific configs (don't commit these)
+bash/.config/shell/local.sh

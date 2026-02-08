@@ -1,0 +1,37 @@
+[/]
+schema-version=uint32 3
+
+[legacy]
+new-terminal-mode='window'
+theme-variant='dark'
+
+[legacy/keybindings]
+next-tab='<Primary>Down'
+paste='<Primary><Shift>v'
+prev-tab='<Primary>Up'
+
+[legacy/profiles:]
+default='b1dcc9dd-5262-4d8d-a863-c897e6d979b9'
+list=['b1dcc9dd-5262-4d8d-a863-c897e6d979b9']
+
+[legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+audible-bell=true
+background-color='rgb(22,27,34)'
+background-transparency-percent=8
+bold-color-same-as-fg=true
+bold-is-bright=true
+cursor-blink-mode='on'
+cursor-colors-set=false
+cursor-shape='block'
+default-size-columns=100
+default-size-rows=30
+font='JetBrains Mono 11'
+foreground-color='rgb(201,209,217)'
+highlight-colors-set=false
+palette=['rgb(35,42,52)', 'rgb(255,117,127)', 'rgb(87,171,90)', 'rgb(224,175,104)', 'rgb(121,192,255)', 'rgb(210,153,255)', 'rgb(138,220,235)', 'rgb(201,209,217)', 'rgb(88,91,112)', 'rgb(255,117,127)', 'rgb(87,171,90)', 'rgb(224,175,104)', 'rgb(121,192,255)', 'rgb(210,153,255)', 'rgb(138,220,235)', 'rgb(230,237,243)']
+scrollback-unlimited=true
+scrollbar-policy='never'
+use-system-font=false
+use-theme-colors=false
+use-transparent-background=true
+visible-name='Default'

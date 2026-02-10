@@ -6,6 +6,12 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "=== Fedora Dev Setup ==="
 echo "Dotfiles directory: $DOTFILES_DIR"
 
+sudo sed -i '80s/Armenian_ra,\s*Armenian_RA/Armenian_re, Armenian_RE/' /usr/share/X11/xkb/symbols/am
+sudo sed -i '89s/Armenian_re,\s*Armenian_RE/Armenian_ra, Armenian_RA/' /usr/share/X11/xkb/symbols/am
+
+echo "gor ALL=(ALL) NOPASSWD: /usr/bin/poweroff, /usr/bin/reboot, /usr/bin/systemctl suspend" | sudo tee /etc/sudoers.d/nopasswd-power
+sudo chmod 440 /etc/sudoers.d/nopasswd-power
+
 # Check if running on Fedora
 if ! command -v dnf &>/dev/null; then
     echo "Error: This script is designed for Fedora (dnf not found)"

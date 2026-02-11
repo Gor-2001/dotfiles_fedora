@@ -183,10 +183,11 @@ fi
 # -----------------------------
 if command -v eza &>/dev/null; then
     alias ls='eza --icons'
-    alias ll='eza -l --icons'
-    alias la='eza -la --icons'
+    alias ll='eza -la --icons'
     alias lt='eza --tree --level=2 --icons'
 fi
+
+set bell-style none
 
 if command -v bat &>/dev/null; then
     alias cat='bat'

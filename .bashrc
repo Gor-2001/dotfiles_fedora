@@ -166,18 +166,32 @@ fi
 # Cargo environment
 # -----------------------------
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
-eval "$(starship init bash)"
-eval "$(zoxide init bash)"
 
-eval "$(starship init bash)"
-alias ls='eza --icons'
-alias ll='eza -l --icons'
-alias cat='bat'
+# Starship prompt
+# -----------------------------
+if command -v starship &>/dev/null; then
+    eval "$(starship init bash)"
+fi
 
-# Custom prompt and aliases
-eval "$(starship init bash)"
-alias ls='eza --icons'
-alias ll='eza -l --icons'
-alias la='eza -la --icons'
-alias cat='bat'
-alias nf='fastfetch'
+# Zoxide (smarter cd)
+# -----------------------------
+if command -v zoxide &>/dev/null; then
+    eval "$(zoxide init bash)"
+fi
+
+# Modern CLI tool aliases
+# -----------------------------
+if command -v eza &>/dev/null; then
+    alias ls='eza --icons'
+    alias ll='eza -l --icons'
+    alias la='eza -la --icons'
+    alias lt='eza --tree --level=2 --icons'
+fi
+
+if command -v bat &>/dev/null; then
+    alias cat='bat'
+fi
+
+if command -v fastfetch &>/dev/null; then
+    alias nf='fastfetch'
+fi

@@ -12,9 +12,6 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # Network
 alias ts='tailscale status'
 
-# Version control
-alias lgit='lazygit'
-
 # CMake shortcuts
 alias cmb='cmake --build build'
 alias cmc='rm -rf build && cmake -S . -B build'

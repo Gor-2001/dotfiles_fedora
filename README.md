@@ -1,209 +1,168 @@
-# Fedora Dotfiles
+# Fedora 43 Dotfiles
 
-Personal dotfiles for Fedora development environment, managed with GNU Stow.
+Personal development environment configuration for Fedora 43.
 
 ## Features
 
-- **Bash**: Custom prompt with git branch, fzf integration, starship support
-- **Vim**: Sensible defaults, whitespace visualization
-- **Git**: Useful aliases and improved log formatting
-- **Tools**: Configurations for modern CLI tools (fzf, bat, fd, ripgrep)
-
-## Prerequisites
-
-Fedora Linux with `sudo` access.
+- **Shell**: Bash with starship prompt, zoxide for smart directory jumping
+- **Modern CLI tools**: eza (ls replacement), bat (cat replacement), ripgrep, fd
+- **Development**: Full C/C++ toolchain (clang, gcc, cmake, meson), Rust toolchain
+- **Git**: Configured with useful aliases and settings
+- **GNOME Terminal**: Custom color scheme and settings
+- **Vim**: Basic configuration with sensible defaults
 
 ## Quick Start
 
+On a fresh Fedora 43 installation:
+
 ```bash
-git clone https://github.com/YOUR_USERNAME/dotfiles.git ~/dotfiles
-cd ~/dotfiles
+git clone https://github.com/YOUR_USERNAME/dotfiles_fedora.git ~/dotfiles_fedora
+cd ~/dotfiles_fedora
 ./setup.sh
 ```
 
 The script will:
 1. Update system packages
-2. Install development tools (gcc, clang, cmake, rust toolchain)
-3. Install CLI utilities (fzf, ripgrep, bat, etc.)
-4. Symlink dotfiles using GNU Stow
-5. Set up shell integrations (starship, zoxide)
+2. Install development tools and dependencies
+3. Set up Rust toolchain
+4. Install modern CLI tools (starship, eza, bat, zoxide)
+5. Symlink all dotfiles to your home directory
+6. Configure GNOME Terminal
+7. Back up any existing configuration files
 
-## Manual Installation
+## What's Included
 
-If you prefer to install components separately:
+### System Packages
+- Core development tools (git, vim, neovim)
+- Build essentials (cmake, meson, ninja, clang, gcc)
+- CLI utilities (fzf, ripgrep, fd-find, tree, htop, btop)
+- Version control tools (gh)
+- Debugging tools (gdb, lldb, valgrind)
 
+### Rust-based CLI Tools
+- **starship**: Fast, customizable shell prompt
+- **eza**: Modern replacement for ls with icons
+- **bat**: Cat clone with syntax highlighting
+- **zoxide**: Smarter cd that learns your habits
+
+### Dotfiles
+- `.bashrc`: Bash configuration with custom functions and aliases
+- `.bash_aliases`: Additional shell aliases
+- `.gitconfig`: Git configuration with useful aliases
+- `.vimrc`: Vim configuration
+- `.gnome-terminal-settings`: Terminal appearance and behavior
+
+## Bash Features
+
+### Custom Functions
+- `t [depth]`: Tree view with depth limit (default: 2)
+- `b [level]`: SSH to OverTheWire Bandit challenges
+- `gc [user/repo|repo]`: Quick git clone from GitHub
+
+### Modern Aliases
+- `ls`, `ll`, `la`: Enhanced with eza and icons
+- `lt`: Tree view using eza
+- `cat`: Syntax-highlighted with bat
+- `nf`: Run fastfetch
+
+### Git Aliases
+- `git adog`: Pretty log graph (last 5 commits)
+- `git st`: Short status
+- `git cm`: Quick commit with message
+- `git co/cob`: Checkout/create branch
+- See `.gitconfig` for full list
+
+## Manual Steps After Setup
+
+1. **Restart your terminal** or run:
+   ```bash
+   source ~/.bashrc
+   ```
+
+2. **Install Nerd Font** (optional, for starship icons):
+   - Download from https://www.nerdfonts.com/
+   - Recommended: JetBrains Mono Nerd Font
+   - Set in GNOME Terminal preferences
+
+3. **Verify installations**:
+   ```bash
+   starship --version
+   eza --version
+   bat --version
+   zoxide --version
+   ```
+
+## Customization
+
+### Git Configuration
+The `.gitconfig` includes your email and name. Update if needed:
 ```bash
-# Install GNU Stow
-sudo dnf install stow
+git config --global user.email "your.email@example.com"
+git config --global user.name "Your Name"
+```
 
-# Stow individual packages
-cd ~/dotfiles
-stow bash
-stow vim
-stow git
-stow gnome-terminal
+### GNOME Terminal
+Current settings use:
+- Font: JetBrains Mono 11
+- Theme: Dark with transparency
+- Color scheme: GitHub Dark-inspired
+
+To export your current settings:
+```bash
+dconf dump /org/gnome/terminal/ > .gnome-terminal-settings
+```
+
+### Starship Prompt
+Starship uses default configuration. To customize:
+```bash
+mkdir -p ~/.config
+starship config > ~/.config/starship.toml
 ```
 
 ## Structure
 
 ```
-dotfiles/
-├── bash/
-│   ├── .bashrc
-│   └── .bash_aliases
-├── vim/
-│   ├── .vimrc
-│   └── .vim/
-├── git/
-│   └── .gitconfig
-├── gnome-terminal/
-│   └── .gnome-terminal-settings
-└── setup.sh
+dotfiles_fedora/
+├── .bashrc              # Main bash configuration
+├── .bash_aliases        # Shell aliases
+├── .gitconfig          # Git settings and aliases
+├── .vimrc              # Vim configuration
+├── .vim/               # Vim runtime files
+├── .gnome-terminal-settings  # Terminal theme
+├── setup.sh            # Automated setup script
+└── README.md           # This file
 ```
-
-Each directory is a "Stow package" that mirrors your home directory structure.
-
-## Configuration
-
-After installation:
-
-1. Edit `~/.gitconfig` to set your email and name:
-   ```bash
-   git config --global user.name "Your Name"
-   git config --global user.email "your.email@example.com"
-   ```
-
-2. Restart your shell or source the config:
-   ```bash
-   source ~/.bashrc
-   ```
-
-3. Optional: Install a Nerd Font for starship prompt icons
-
-## Key Aliases
-
-### System
-- `pow` - Poweroff
-- `slp` - Suspend
-- `res` - Reboot
-- `c`/`cl`/`cls` - Clear screen
-
-### Navigation
-- `cwd` - Jump to ~/Documents/Repos
-- `llp` - List current and parent directory
-
-### CMake
-- `cmc` - Clean configure
-- `cmd` - Configure debug build
-- `cmr` - Configure release build
-- `cmb` - Build
-
-### Rust
-- `cc` - cargo check
-- `crun` - cargo run
-- `cdb` - cargo build
-- `crl` - cargo build --release
-- `ct` - cargo test
-- `cw` - cargo watch
-
-### Git
-- `lgit` - Launch lazygit
-- `git adog` - Pretty log with graph
-- `git st` - Short status
-- `gc <repo>` - Quick clone from your account
-- `gra` - List all repos (orgs + personal)
-- `grp` - List personal repos
-- `gro` - List org repos
-
-### Python
-- `av` - Activate venv
-- `dv` - Deactivate venv
-- `jup` - Launch Jupyter lab
-
-### Gaming (NVIDIA Optimus)
-- `agm` - Activate gaming mode (switch to NVIDIA)
-- `dgm` - Deactivate gaming mode (switch to on-demand)
-
-## Functions
-
-- `t [depth]` - Tree with depth limit (default: 2)
-- `b [level]` - SSH to OverTheWire Bandit level
-- `gc [user/]repo` - Clone repo (uses your username if not specified)
-
-## Tools Installed
-
-### Development
-- gcc, g++, clang, lldb
-- cmake, meson, ninja
-- rust (via rustup)
-- git, gh (GitHub CLI)
-- lazygit
-
-### CLI Utilities
-- fzf (fuzzy finder)
-- ripgrep (fast grep)
-- fd (fast find)
-- bat (cat with syntax highlighting)
-- zoxide (smarter cd)
-- starship (cross-shell prompt)
-- tree, htop
-
-## Uninstalling
-
-To remove symlinks:
-
-```bash
-cd ~/dotfiles
-stow -D bash vim git gnome-terminal
-```
-
-To remove packages:
-
-```bash
-sudo dnf remove <package-names>
-```
-
-## Updating
-
-```bash
-cd ~/dotfiles
-git pull
-stow --restow bash vim git gnome-terminal
-```
-
-## Customization
-
-- Edit `bash/.bashrc` for shell behavior
-- Edit `bash/.bash_aliases` for custom aliases
-- Edit `vim/.vimrc` for vim settings
-- Edit `git/.gitconfig` for git configuration
-
-Changes take effect immediately for new shells, or run `source ~/.bashrc`.
 
 ## Troubleshooting
 
-### Stow conflicts
-If Stow reports conflicts with existing files:
+### Starship not showing icons
+Install a Nerd Font and set it in your terminal preferences.
 
+### Cargo tools not found after installation
+Add to your current session:
 ```bash
-# Backup existing files
-mv ~/.bashrc ~/.bashrc.backup
-mv ~/.vimrc ~/.vimrc.backup
-
-# Then restow
-stow bash vim
+source ~/.cargo/env
 ```
 
-### fzf not working
-Ensure fzf shell integration is sourced. The paths are set for Fedora:
-- `/usr/share/fzf/shell/key-bindings.bash`
-- `/usr/share/bash-completion/completions/fzf`
-
-### Command not found after install
-Make sure `~/.local/bin` and `~/.cargo/bin` are in your PATH:
-
+### GNOME Terminal settings not applied
+Manually load:
 ```bash
-echo $PATH | grep -E '\.local/bin|\.cargo/bin'
+dconf load /org/gnome/terminal/ < .gnome-terminal-settings
 ```
 
-If missing, restart your shell or source `~/.bashrc`.
+### Permission denied on setup.sh
+Make executable:
+```bash
+chmod +x setup.sh
+```
+
+## Backup
+
+The setup script automatically backs up existing configuration files to:
+```
+~/.dotfiles_backup_YYYYMMDD_HHMMSS/
+```
+
+## License
+
+MIT License - Feel free to use and modify for your own setup.

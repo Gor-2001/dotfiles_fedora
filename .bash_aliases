@@ -4,6 +4,11 @@ alias cwd='cd ~/Documents/Repos'
 # Enhanced ls
 alias llp='echo -e "\n\e[1;34mParent dir:\e[0m" && ls -la --color=auto .. && echo -e "\e[1;34mCurrent dir:\e[0m" && ls -la --color=auto'
 
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
 # Network
 alias ts='tailscale status'
 

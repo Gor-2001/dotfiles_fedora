@@ -26,15 +26,6 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-# -----------------------------
-# Basic aliases
-# -----------------------------
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
-# -----------------------------
 # Custom functions
 # -----------------------------
 # Tree with depth limit
@@ -177,3 +168,16 @@ fi
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
+
+eval "$(starship init bash)"
+alias ls='eza --icons'
+alias ll='eza -l --icons'
+alias cat='bat'
+
+# Custom prompt and aliases
+eval "$(starship init bash)"
+alias ls='eza --icons'
+alias ll='eza -l --icons'
+alias la='eza -la --icons'
+alias cat='bat'
+alias nf='fastfetch'

@@ -1,3 +1,62 @@
 [user]
-	name = Gor-2001
-	email = gormelqumyan6@gmail.com
+	email = gor.melkumyan@qdsc.us
+	name = GMelkumyan-01
+
+[core]
+	editor = vim
+	autocrlf = input
+	pager = less -FRX
+
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = false
+
+[push]
+	default = simple
+	followTags = true
+
+[alias]
+	# Pretty log
+	adog = log --all --graph -5 --date=relative --pretty=format:'%C(bold yellow)%h%C(reset) - %C(bold green)%an%C(reset) %C(dim white)(%ar)%C(reset)%C(bold red)%d%C(reset)%n          %s%n'
+	
+	# Branch operations
+	br = branch
+	bra = branch -a
+	
+	# Status
+	st = status -s
+	
+	# Diff/merge tools
+	dt = difftool
+	mt = mergetool
+	
+	# Commit shortcuts
+	cm = commit -m
+	ca = commit --amend
+	
+	# Checkout shortcuts
+	co = checkout
+	cob = checkout -b
+	
+	# Show changes
+	last = log -1 HEAD --stat
+	
+	# Stash shortcuts
+	sl = stash list
+	sp = stash pop
+	ss = stash save
+
+[color]
+	ui = auto
+
+[diff]
+	tool = vimdiff
+
+[merge]
+	tool = vimdiff
+	conflictstyle = diff3
+
+[credential]
+	helper = cache --timeout=3600

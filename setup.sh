@@ -62,7 +62,6 @@ echo "[4/8] Installing core packages..."
 sudo dnf install -y \
     git \
     vim \
-    neovim \
     fzf \
     ripgrep \
     fd-find \

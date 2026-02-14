@@ -1,7 +1,15 @@
 # Directory navigation
 alias cwd='cd ~/Documents/Repos'
 
+alias scr='sudo ddcutil setvcp 10 '
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# Process search and kill aliases
+alias psg='ps aux | grep -v grep | grep -i -e VSZ -e'
+alias psf='pgrep -a'
+alias kp='killall -i'
+alias kpf='killall -9'
+alias k9='kill -9'
 
 # Network
 alias ts='tailscale status'

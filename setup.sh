@@ -85,10 +85,10 @@ sudo dnf install -y \
     fastfetch
 
 
-# ----------------------------
+# -----------------------------
 # Rust toolchain
 # -----------------------------
-echo "[5/7] Setting up Rust..."
+echo "[5/8] Setting up Rust..."
 if ! command -v rustc &>/dev/null; then
     echo "  Installing Rust via rustup..."
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
@@ -104,7 +104,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # -----------------------------
 # Rust CLI tools
 # -----------------------------
-echo "[6/7] Installing Rust-based CLI tools..."
+echo "[6/8] Installing Rust-based CLI tools..."
 
 install_cargo_tool() {
     local tool=$1
@@ -132,7 +132,7 @@ fi
 # -----------------------------
 # Symlink dotfiles
 # -----------------------------
-echo "[7/7] Symlinking dotfiles..."
+echo "[7/8] Symlinking dotfiles..."
 
 # Create backup directory if needed
 mkdir -p "$BACKUP_DIR"
@@ -186,7 +186,7 @@ fi
 # GNOME Terminal configuration
 # -----------------------------
 echo ""
-echo "Configuring GNOME Terminal..."
+echo "[8/8] Configuring GNOME Terminal..."
 if [ -f "$DOTFILES_DIR/.gnome-terminal-settings" ]; then
     # Load the dconf settings
     dconf load /org/gnome/terminal/ < "$DOTFILES_DIR/.gnome-terminal-settings"

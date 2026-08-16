@@ -16,7 +16,7 @@ Personal development environment configuration for Fedora 43.
 On a fresh Fedora 43 installation:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/dotfiles_fedora.git ~/dotfiles_fedora
+git clone https://github.com/Gor-2001/dotfiles_fedora.git ~/dotfiles_fedora
 cd ~/dotfiles_fedora
 ./setup.sh
 ```

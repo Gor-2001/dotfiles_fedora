@@ -8,6 +8,10 @@
 *.swo
 *.swn
 
+# Vim netrw history (leaks local directory paths)
+.netrwhist
+.vim/.netrwhist
+
 # System files
 .DS_Store
 Thumbs.db

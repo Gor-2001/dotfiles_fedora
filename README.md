@@ -4,12 +4,14 @@ Personal development environment configuration for Fedora 43.
 
 ## Features
 
-- **Shell**: Bash with starship prompt, zoxide for smart directory jumping
+- **Shell**: Bash with a single-line starship prompt, zoxide for smart directory jumping
 - **Modern CLI tools**: eza (ls replacement), bat (cat replacement), ripgrep, fd
 - **Development**: Full C/C++ toolchain (clang, gcc, cmake, meson), Rust toolchain
 - **Git**: Configured with useful aliases and settings
-- **GNOME Terminal**: Custom color scheme and settings
+- **GNOME Terminal**: 120x30, GitHub Dark-inspired palette, transparency, thin i-beam cursor
 - **Vim**: Basic configuration with sensible defaults
+- **Debloat**: Removes default GNOME/Fedora apps you likely won't use (LibreOffice, Contacts, Maps, Weather, Tour, Simple Scan, Malcontent Control, Characters, Fedora Media Writer, Video Player, Camera, Help, Clocks, System Monitor, Boxes, Calendar, Software, Connections)
+- **Apps**: Telegram Desktop via Flatpak
 
 ## Quick Start
 
@@ -22,13 +24,16 @@ cd ~/dotfiles_fedora
 ```
 
 The script will:
-1. Update system packages
-2. Install development tools and dependencies
-3. Set up Rust toolchain
-4. Install modern CLI tools (starship, eza, bat, zoxide)
-5. Symlink all dotfiles to your home directory
-6. Configure GNOME Terminal
-7. Back up any existing configuration files
+1. Fix the Armenian keyboard layout (if present)
+2. Configure passwordless poweroff/reboot/suspend
+3. Update system packages
+4. Install development tools and dependencies
+5. Remove default app bloat (LibreOffice, Contacts, Maps, Weather, Tour, Simple Scan, Malcontent, Characters, Fedora Media Writer)
+6. Set up Rust toolchain
+7. Install modern CLI tools (starship, eza, bat, zoxide)
+8. Install extra GUI apps (Telegram Desktop via Flatpak)
+9. Symlink all dotfiles to your home directory, backing up any existing configuration files, and create `~/Documents/Repos`
+10. Configure GNOME Terminal
 
 ## What's Included
 
@@ -51,6 +56,10 @@ The script will:
 - `.gitconfig`: Git configuration with useful aliases
 - `.vimrc`: Vim configuration
 - `.gnome-terminal-settings`: Terminal appearance and behavior
+- `.config/starship.toml`: Single-line prompt (directory, git branch/status, character — no line break)
+
+### Removed by default
+`setup.sh` uninstalls these Fedora Workstation defaults since they're unlikely to be used on a dev machine: the full LibreOffice suite, GNOME Contacts, Maps, Weather, Tour, Simple Scan, the Parental Controls app (`malcontent-control` — the underlying `malcontent` library stays, since `gnome-control-center` depends on it), GNOME Characters, Fedora Media Writer, Video Player (`showtime`), Camera (`snapshot`), Help (`yelp`), Clocks, System Monitor (redundant with htop/btop), Boxes, Calendar, Software (the GUI app store — dnf/flatpak still work from the CLI), and Connections (RDP/VNC client). Disks, Fonts, Logs, and Decibels (audio player) are kept. Edit the `BLOAT_PACKAGES` array in `setup.sh` if you want a different set.
 
 ## Bash Features
 
@@ -103,9 +112,10 @@ git config --global user.name "Your Name"
 
 ### GNOME Terminal
 Current settings use:
-- Font: JetBrains Mono 11
-- Theme: Dark with transparency
-- Color scheme: GitHub Dark-inspired
+- Size: 120x30
+- Font: JetBrains Mono 13
+- Theme: Dark, 20% transparent, thin i-beam cursor
+- Color scheme: GitHub Dark-inspired, high-contrast bright variants
 
 To export your current settings:
 ```bash
@@ -113,11 +123,7 @@ dconf dump /org/gnome/terminal/ > .gnome-terminal-settings
 ```
 
 ### Starship Prompt
-Starship uses default configuration. To customize:
-```bash
-mkdir -p ~/.config
-starship config > ~/.config/starship.toml
-```
+`.config/starship.toml` overrides the default format to stay on one line (no `$line_break` before the prompt character). Edit it directly to add more modules or change colors — see https://starship.rs/config/.
 
 ## Structure
 
@@ -128,6 +134,8 @@ dotfiles_fedora/
 ├── .gitconfig          # Git settings and aliases
 ├── .vimrc              # Vim configuration
 ├── .vim/               # Vim runtime files
+├── .config/
+│   └── starship.toml   # Single-line prompt config
 ├── .gnome-terminal-settings  # Terminal theme
 ├── setup.sh            # Automated setup script
 └── README.md           # This file

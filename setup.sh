@@ -32,7 +32,7 @@ fi
 # -----------------------------
 # Armenian keyboard fix
 # -----------------------------
-echo "[1/8] Applying Armenian keyboard layout fix..."
+echo "[1/10] Applying Armenian keyboard layout fix..."
 if [ -f /usr/share/X11/xkb/symbols/am ]; then
     sudo sed -i '80s/Armenian_ra,\s*Armenian_RA/Armenian_re, Armenian_RE/' /usr/share/X11/xkb/symbols/am
     sudo sed -i '89s/Armenian_re,\s*Armenian_RE/Armenian_ra, Armenian_RA/' /usr/share/X11/xkb/symbols/am
@@ -44,7 +44,7 @@ fi
 # -----------------------------
 # Sudoers configuration
 # -----------------------------
-echo "[2/8] Configuring passwordless power commands..."
+echo "[2/10] Configuring passwordless power commands..."
 echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/poweroff, /usr/bin/reboot, /usr/bin/systemctl suspend" | sudo tee /etc/sudoers.d/nopasswd-power > /dev/null
 sudo chmod 440 /etc/sudoers.d/nopasswd-power
 echo "  ✓ Passwordless poweroff/reboot/suspend enabled"
@@ -52,13 +52,13 @@ echo "  ✓ Passwordless poweroff/reboot/suspend enabled"
 # -----------------------------
 # System update
 # -----------------------------
-echo "[3/8] Updating system..."
+echo "[3/10] Updating system..."
 sudo dnf update -y
 
 # -----------------------------
 # Core packages
 # -----------------------------
-echo "[4/8] Installing core packages..."
+echo "[4/10] Installing core packages..."
 sudo dnf install -y \
     git \
     vim \
@@ -82,13 +82,39 @@ sudo dnf install -y \
     wget \
     unzip \
     tar \
-    fastfetch
+    fastfetch \
+    flatpak
 
+# -----------------------------
+# Remove default app bloat
+# -----------------------------
+echo "[5/10] Removing unwanted default applications..."
+BLOAT_PACKAGES=(
+    'libreoffice*'
+    gnome-contacts
+    gnome-maps
+    gnome-weather
+    gnome-tour
+    simple-scan
+    malcontent-control
+    gnome-characters
+    mediawriter
+    showtime
+    snapshot
+    yelp
+    gnome-clocks
+    gnome-system-monitor
+    gnome-boxes
+    gnome-calendar
+    gnome-software
+    gnome-connections
+)
+sudo dnf remove -y "${BLOAT_PACKAGES[@]}" || echo "  ⚠ Some packages were already absent, continuing"
 
 # -----------------------------
 # Rust toolchain
 # -----------------------------
-echo "[5/8] Setting up Rust..."
+echo "[6/10] Setting up Rust..."
 if ! command -v rustc &>/dev/null; then
     echo "  Installing Rust via rustup..."
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
@@ -104,7 +130,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # -----------------------------
 # Rust CLI tools
 # -----------------------------
-echo "[6/8] Installing Rust-based CLI tools..."
+echo "[7/10] Installing Rust-based CLI tools..."
 
 install_cargo_tool() {
     local tool=$1
@@ -130,9 +156,21 @@ else
 fi
 
 # -----------------------------
+# Extra GUI apps (Flatpak)
+# -----------------------------
+echo "[8/10] Installing extra GUI apps..."
+if command -v flatpak &>/dev/null; then
+    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    flatpak install -y flathub org.telegram.desktop
+    echo "  ✓ Telegram Desktop installed"
+else
+    echo "  ⚠ flatpak not found, skipping Telegram Desktop"
+fi
+
+# -----------------------------
 # Symlink dotfiles
 # -----------------------------
-echo "[7/8] Symlinking dotfiles..."
+echo "[9/10] Symlinking dotfiles..."
 
 # Create backup directory if needed
 mkdir -p "$BACKUP_DIR"
@@ -171,6 +209,11 @@ safe_symlink "$DOTFILES_DIR/.bashrc" "$HOME/.bashrc"
 safe_symlink "$DOTFILES_DIR/.bash_aliases" "$HOME/.bash_aliases"
 safe_symlink "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
 safe_symlink "$DOTFILES_DIR/.vimrc" "$HOME/.vimrc"
+safe_symlink "$DOTFILES_DIR/.config/starship.toml" "$HOME/.config/starship.toml"
+
+# Common directories
+mkdir -p "$HOME/Documents/Repos"
+echo "  ✓ Created ~/Documents/Repos"
 
 # Symlink vim directory if it exists
 if [ -d "$DOTFILES_DIR/.vim" ]; then
@@ -186,7 +229,7 @@ fi
 # GNOME Terminal configuration
 # -----------------------------
 echo ""
-echo "[8/8] Configuring GNOME Terminal..."
+echo "[10/10] Configuring GNOME Terminal..."
 if [ -f "$DOTFILES_DIR/.gnome-terminal-settings" ]; then
     # Load the dconf settings
     dconf load /org/gnome/terminal/ < "$DOTFILES_DIR/.gnome-terminal-settings"
@@ -214,8 +257,10 @@ echo "   Setup Complete!"
 echo "========================================="
 echo ""
 echo "✓ System packages installed"
+echo "✓ Default app bloat removed"
 echo "✓ Rust toolchain configured"
 echo "✓ CLI tools installed (eza, bat, zoxide, starship)"
+echo "✓ Telegram Desktop installed"
 echo "✓ Dotfiles symlinked"
 echo "✓ GNOME Terminal configured"
 echo ""

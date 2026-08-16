@@ -1,0 +1,4 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Single-line prompt: directory, git branch/status, then the character — no line break.
+format = """$directory$git_branch$git_status$character"""

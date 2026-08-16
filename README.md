@@ -1,6 +1,6 @@
-# Fedora 43 Dotfiles
+# Fedora 44 Dotfiles
 
-Personal development environment configuration for Fedora 43.
+Personal development environment configuration for Fedora 44.
 
 ## Features
 
@@ -15,7 +15,7 @@ Personal development environment configuration for Fedora 43.
 
 ## Quick Start
 
-On a fresh Fedora 43 installation:
+On a fresh Fedora 44 installation:
 
 ```bash
 git clone https://github.com/Gor-2001/dotfiles_fedora.git ~/dotfiles_fedora
@@ -28,7 +28,7 @@ The script will:
 2. Configure passwordless poweroff/reboot/suspend
 3. Update system packages
 4. Install development tools and dependencies
-5. Remove default app bloat (LibreOffice, Contacts, Maps, Weather, Tour, Simple Scan, Malcontent, Characters, Fedora Media Writer)
+5. Remove default app bloat (see "Removed by default" below)
 6. Set up Rust toolchain
 7. Install modern CLI tools (starship, eza, bat, zoxide)
 8. Install extra GUI apps (Telegram Desktop via Flatpak)

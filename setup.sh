@@ -5,7 +5,7 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKUP_DIR="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
 
 echo "========================================="
-echo "   Fedora 43 Development Environment"
+echo "   Fedora 44 Development Environment"
 echo "========================================="
 echo "Dotfiles directory: $DOTFILES_DIR"
 echo ""
@@ -20,8 +20,8 @@ fi
 
 fedora_version=$(rpm -E %fedora)
 echo "Detected Fedora version: $fedora_version"
-if [ "$fedora_version" != "43" ]; then
-    echo "Warning: This script is tested on Fedora 43, you're running $fedora_version"
+if [ "$fedora_version" != "44" ]; then
+    echo "Warning: This script is tested on Fedora 44, you're running $fedora_version"
     read -p "Continue anyway? (y/N) " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -39,6 +39,17 @@ if [ -f /usr/share/X11/xkb/symbols/am ]; then
     echo "  ✓ Armenian keyboard layout fixed"
 else
     echo "  ⚠ Armenian keyboard file not found, skipping"
+fi
+
+# Add Armenian phonetic as an input source alongside US (switch with Super+Space)
+if command -v gsettings &>/dev/null; then
+    current_sources=$(gsettings get org.gnome.desktop.input-sources sources)
+    if [[ "$current_sources" != *"'am+phonetic'"* ]]; then
+        gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'am+phonetic')]"
+        echo "  ✓ Armenian (phonetic) input source added"
+    else
+        echo "  ✓ Armenian (phonetic) input source already configured"
+    fi
 fi
 
 # -----------------------------
@@ -236,6 +247,18 @@ if [ -f "$DOTFILES_DIR/.gnome-terminal-settings" ]; then
     echo "  ✓ GNOME Terminal settings applied"
 else
     echo "  ⚠ GNOME Terminal settings file not found"
+fi
+
+# -----------------------------
+# Wallpaper
+# -----------------------------
+if [ -f "$DOTFILES_DIR/background.jpg" ]; then
+    gsettings set org.gnome.desktop.background picture-uri "file://$DOTFILES_DIR/background.jpg"
+    gsettings set org.gnome.desktop.background picture-uri-dark "file://$DOTFILES_DIR/background.jpg"
+    gsettings set org.gnome.desktop.background picture-options 'zoom'
+    gsettings set org.gnome.desktop.screensaver picture-uri "file://$DOTFILES_DIR/background.jpg"
+    gsettings set org.gnome.desktop.screensaver picture-options 'zoom'
+    echo "  ✓ Wallpaper and lock screen set"
 fi
 
 # -----------------------------

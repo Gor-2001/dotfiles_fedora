@@ -8,7 +8,7 @@ Personal development environment configuration for Fedora 44.
 - **Modern CLI tools**: eza (ls replacement), bat (cat replacement), ripgrep, fd
 - **Development**: Full C/C++ toolchain (clang, gcc, cmake, meson), Rust toolchain
 - **Git**: Configured with useful aliases and settings
-- **GNOME Terminal**: 120x30, GitHub Dark-inspired palette, transparency, thin i-beam cursor
+- **Ptyxis terminal**: 150x40 default window size (theme/font/palette configured manually via Ptyxis Preferences)
 - **Vim**: Basic configuration with sensible defaults
 - **Debloat**: Removes default GNOME/Fedora apps you likely won't use (LibreOffice, Contacts, Maps, Weather, Tour, Simple Scan, Malcontent Control, Characters, Fedora Media Writer, Video Player, Camera, Help, Clocks, System Monitor, Boxes, Calendar, Software, Connections)
 - **Apps**: Telegram Desktop via Flatpak
@@ -32,8 +32,9 @@ The script will:
 6. Set up Rust toolchain
 7. Install modern CLI tools (starship, eza, bat, zoxide)
 8. Install extra GUI apps (Telegram Desktop via Flatpak)
-9. Symlink all dotfiles to your home directory, backing up any existing configuration files, and create `~/Documents/Repos`
-10. Configure GNOME Terminal
+9. Install text-to-speech (edge-tts, via pipx)
+10. Symlink all dotfiles to your home directory, backing up any existing configuration files, and create `~/Documents/Repos`
+11. Configure Ptyxis terminaldsdsd 
 
 ## What's Included
 
@@ -55,8 +56,10 @@ The script will:
 - `.bash_aliases`: Additional shell aliases
 - `.gitconfig`: Git configuration with useful aliases
 - `.vimrc`: Vim configuration
-- `.gnome-terminal-settings`: Terminal appearance and behavior
 - `.config/starship.toml`: Single-line prompt (directory, git branch/status, character — no line break)
+- `.config/Code/User/settings.json`: VS Code integrated terminal colors, matching the Nord palette
+
+Ptyxis (the default Fedora terminal app) isn't configured via a dotfile — `setup.sh` sets its default window size directly with `gsettings` since its dconf keys are keyed by a per-install random profile UUID. Theme/font/palette are left to Ptyxis' own Preferences UI.
 
 ### Removed by default
 `setup.sh` uninstalls these Fedora Workstation defaults since they're unlikely to be used on a dev machine: the full LibreOffice suite, GNOME Contacts, Maps, Weather, Tour, Simple Scan, the Parental Controls app (`malcontent-control` — the underlying `malcontent` library stays, since `gnome-control-center` depends on it), GNOME Characters, Fedora Media Writer, Video Player (`showtime`), Camera (`snapshot`), Help (`yelp`), Clocks, System Monitor (redundant with htop/btop), Boxes, Calendar, Software (the GUI app store — dnf/flatpak still work from the CLI), and Connections (RDP/VNC client). Disks, Fonts, Logs, and Decibels (audio player) are kept. Edit the `BLOAT_PACKAGES` array in `setup.sh` if you want a different set.
@@ -88,17 +91,15 @@ The script will:
    source ~/.bashrc
    ```
 
-2. **Install Nerd Font** (optional, for starship icons):
-   - Download from https://www.nerdfonts.com/
-   - Recommended: JetBrains Mono Nerd Font
-   - Set in GNOME Terminal preferences
+   `setup.sh` already downloads the patched JetBrainsMono Nerd Font from [ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) and sets it as the Ptyxis font, so starship's icons work out of the box — no manual font step needed.
 
-3. **Verify installations**:
+2. **Verify installations**:
    ```bash
    starship --version
    eza --version
    bat --version
    zoxide --version
+   edge-tts --version
    ```
 
 ## Customization
@@ -110,17 +111,8 @@ git config --global user.email "your.email@example.com"
 git config --global user.name "Your Name"
 ```
 
-### GNOME Terminal
-Current settings use:
-- Size: 120x30
-- Font: JetBrains Mono 13
-- Theme: Dark, 20% transparent, thin i-beam cursor
-- Color scheme: GitHub Dark-inspired, high-contrast bright variants
-
-To export your current settings:
-```bash
-dconf dump /org/gnome/terminal/ > .gnome-terminal-settings
-```
+### Ptyxis Terminal
+`setup.sh` only sets the default window size (150x40). Everything else — palette, opacity, font, cursor shape — is configured by hand in Ptyxis → Preferences, since Ptyxis ships dozens of built-in named palettes (Nord, Dracula, Gruvbox, Catppuccin Mocha, Tokyo Night, Solarized, and many more from [Gogh](https://github.com/Gogh-Co/Gogh)) that are easiest to browse and pick from the Appearance tab directly.
 
 ### Starship Prompt
 `.config/starship.toml` overrides the default format to stay on one line (no `$line_break` before the prompt character). Edit it directly to add more modules or change colors — see https://starship.rs/config/.
@@ -135,16 +127,16 @@ dotfiles_fedora/
 ├── .vimrc              # Vim configuration
 ├── .vim/               # Vim runtime files
 ├── .config/
-│   └── starship.toml   # Single-line prompt config
-├── .gnome-terminal-settings  # Terminal theme
-├── setup.sh            # Automated setup script
+│   ├── starship.toml   # Single-line prompt config
+│   └── Code/User/settings.json  # VS Code integrated terminal colors (Nord)
+├── setup.sh            # Automated setup script (also sets Ptyxis default window size)
 └── README.md           # This file
 ```
 
 ## Troubleshooting
 
 ### Starship not showing icons
-Install a Nerd Font and set it in your terminal preferences.
+`setup.sh` installs the JetBrainsMono Nerd Font and sets it automatically. If icons are still missing, confirm it's actually selected in Ptyxis → Preferences → Profile → Font, and that `fc-list | grep "JetBrainsMono Nerd Font"` shows it installed.
 
 ### Cargo tools not found after installation
 Add to your current session:
@@ -152,10 +144,11 @@ Add to your current session:
 source ~/.cargo/env
 ```
 
-### GNOME Terminal settings not applied
-Manually load:
+### Ptyxis settings not applied
+Re-run just that part of `setup.sh`, or apply manually:
 ```bash
-dconf load /org/gnome/terminal/ < .gnome-terminal-settings
+gsettings set org.gnome.Ptyxis default-columns 150
+gsettings set org.gnome.Ptyxis default-rows 40
 ```
 
 ### Permission denied on setup.sh

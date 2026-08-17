@@ -32,7 +32,7 @@ fi
 # -----------------------------
 # Armenian keyboard fix
 # -----------------------------
-echo "[1/10] Applying Armenian keyboard layout fix..."
+echo "[1/12] Applying Armenian keyboard layout fix..."
 if [ -f /usr/share/X11/xkb/symbols/am ]; then
     sudo sed -i '80s/Armenian_ra,\s*Armenian_RA/Armenian_re, Armenian_RE/' /usr/share/X11/xkb/symbols/am
     sudo sed -i '89s/Armenian_re,\s*Armenian_RE/Armenian_ra, Armenian_RA/' /usr/share/X11/xkb/symbols/am
@@ -55,7 +55,7 @@ fi
 # -----------------------------
 # Sudoers configuration
 # -----------------------------
-echo "[2/10] Configuring passwordless power commands..."
+echo "[2/12] Configuring passwordless power commands..."
 echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/poweroff, /usr/bin/reboot, /usr/bin/systemctl suspend" | sudo tee /etc/sudoers.d/nopasswd-power > /dev/null
 sudo chmod 440 /etc/sudoers.d/nopasswd-power
 echo "  ✓ Passwordless poweroff/reboot/suspend enabled"
@@ -63,13 +63,13 @@ echo "  ✓ Passwordless poweroff/reboot/suspend enabled"
 # -----------------------------
 # System update
 # -----------------------------
-echo "[3/10] Updating system..."
+echo "[3/12] Updating system..."
 sudo dnf update -y
 
 # -----------------------------
 # Core packages
 # -----------------------------
-echo "[4/10] Installing core packages..."
+echo "[4/12] Installing core packages..."
 sudo dnf install -y \
     git \
     vim \
@@ -94,12 +94,13 @@ sudo dnf install -y \
     unzip \
     tar \
     fastfetch \
-    flatpak
+    flatpak \
+    ddcutil
 
 # -----------------------------
 # Remove default app bloat
 # -----------------------------
-echo "[5/10] Removing unwanted default applications..."
+echo "[5/12] Removing unwanted default applications..."
 BLOAT_PACKAGES=(
     'libreoffice*'
     gnome-contacts
@@ -125,7 +126,7 @@ sudo dnf remove -y "${BLOAT_PACKAGES[@]}" || echo "  ⚠ Some packages were alre
 # -----------------------------
 # Rust toolchain
 # -----------------------------
-echo "[6/10] Setting up Rust..."
+echo "[6/12] Setting up Rust..."
 if ! command -v rustc &>/dev/null; then
     echo "  Installing Rust via rustup..."
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
@@ -141,7 +142,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # -----------------------------
 # Rust CLI tools
 # -----------------------------
-echo "[7/10] Installing Rust-based CLI tools..."
+echo "[7/12] Installing Rust-based CLI tools..."
 
 install_cargo_tool() {
     local tool=$1
@@ -169,7 +170,7 @@ fi
 # -----------------------------
 # Extra GUI apps (Flatpak)
 # -----------------------------
-echo "[8/10] Installing extra GUI apps..."
+echo "[8/12] Installing extra GUI apps..."
 if command -v flatpak &>/dev/null; then
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     flatpak install -y flathub org.telegram.desktop
@@ -179,9 +180,51 @@ else
 fi
 
 # -----------------------------
+# Text-to-speech (edge-tts)
+# -----------------------------
+echo "[9/12] Installing text-to-speech (edge-tts)..."
+if ! command -v pipx &>/dev/null; then
+    sudo dnf install -y pipx
+fi
+if command -v pipx &>/dev/null; then
+    if ! command -v edge-tts &>/dev/null; then
+        pipx install edge-tts
+        pipx ensurepath
+        echo "  ✓ edge-tts installed (use 'say' / 'sayclip' after restarting your shell)"
+    else
+        echo "  ✓ edge-tts already installed"
+    fi
+else
+    echo "  ⚠ pipx not available, skipping edge-tts"
+fi
+
+# -----------------------------
+# JetBrainsMono Nerd Font
+# -----------------------------
+# Fedora only packages the plain (non-patched) JetBrains Mono, which has no
+# icon glyphs. starship/fastfetch icons need the patched Nerd Font variant,
+# which isn't in the Fedora repos, so grab it from the upstream release.
+echo "[10/12] Installing JetBrainsMono Nerd Font..."
+FONT_DIR="$HOME/.local/share/fonts/JetBrainsMonoNerdFont"
+if fc-list | grep -q "JetBrainsMono Nerd Font Mono"; then
+    echo "  ✓ JetBrainsMono Nerd Font already installed"
+else
+    TMP_FONT_ZIP=$(mktemp --suffix=.zip)
+    if curl -sL -f -o "$TMP_FONT_ZIP" "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip"; then
+        mkdir -p "$FONT_DIR"
+        unzip -o -q "$TMP_FONT_ZIP" "JetBrainsMonoNerdFontMono-*.ttf" -d "$FONT_DIR"
+        fc-cache -f "$FONT_DIR" >/dev/null
+        echo "  ✓ JetBrainsMono Nerd Font installed"
+    else
+        echo "  ⚠ Failed to download JetBrainsMono Nerd Font, skipping"
+    fi
+    rm -f "$TMP_FONT_ZIP"
+fi
+
+# -----------------------------
 # Symlink dotfiles
 # -----------------------------
-echo "[9/10] Symlinking dotfiles..."
+echo "[11/12] Symlinking dotfiles..."
 
 # Create backup directory if needed
 mkdir -p "$BACKUP_DIR"
@@ -221,6 +264,7 @@ safe_symlink "$DOTFILES_DIR/.bash_aliases" "$HOME/.bash_aliases"
 safe_symlink "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"
 safe_symlink "$DOTFILES_DIR/.vimrc" "$HOME/.vimrc"
 safe_symlink "$DOTFILES_DIR/.config/starship.toml" "$HOME/.config/starship.toml"
+safe_symlink "$DOTFILES_DIR/.config/Code/User/settings.json" "$HOME/.config/Code/User/settings.json"
 
 # Common directories
 mkdir -p "$HOME/Documents/Repos"
@@ -237,16 +281,20 @@ if [ -d "$DOTFILES_DIR/.vim" ]; then
 fi
 
 # -----------------------------
-# GNOME Terminal configuration
+# Ptyxis terminal configuration
 # -----------------------------
+# Fedora Workstation ships Ptyxis (not classic GNOME Terminal) by default.
+# Its dconf schema keys live under a per-install random profile UUID, so we
+# configure it via gsettings against the current default profile rather than
+# dumping/loading a fixed dconf blob.
 echo ""
-echo "[10/10] Configuring GNOME Terminal..."
-if [ -f "$DOTFILES_DIR/.gnome-terminal-settings" ]; then
-    # Load the dconf settings
-    dconf load /org/gnome/terminal/ < "$DOTFILES_DIR/.gnome-terminal-settings"
-    echo "  ✓ GNOME Terminal settings applied"
+echo "[12/12] Configuring Ptyxis terminal..."
+if command -v gsettings &>/dev/null && gsettings list-schemas | grep -q '^org.gnome.Ptyxis$'; then
+    gsettings set org.gnome.Ptyxis default-columns 150
+    gsettings set org.gnome.Ptyxis default-rows 40
+    echo "  ✓ Ptyxis configured: 150x40 default size"
 else
-    echo "  ⚠ GNOME Terminal settings file not found"
+    echo "  ⚠ Ptyxis not found, skipping terminal configuration"
 fi
 
 # -----------------------------
@@ -284,6 +332,7 @@ echo "✓ Default app bloat removed"
 echo "✓ Rust toolchain configured"
 echo "✓ CLI tools installed (eza, bat, zoxide, starship)"
 echo "✓ Telegram Desktop installed"
+echo "✓ Text-to-speech installed (edge-tts — use 'say'/'sayclip')"
 echo "✓ Dotfiles symlinked"
 echo "✓ GNOME Terminal configured"
 echo ""

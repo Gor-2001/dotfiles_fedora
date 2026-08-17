@@ -195,4 +195,34 @@ fi
 
 if command -v fastfetch &>/dev/null; then
     alias nf='fastfetch'
+    # Show system info automatically when a new terminal opens
+    fastfetch
+fi
+
+# Text-to-speech (edge-tts natural voice)
+# -----------------------------
+if command -v edge-tts &>/dev/null && command -v ffplay &>/dev/null; then
+    # Read text aloud: `say "hello there"` or `echo hello | say`
+    say() {
+        local voice="${TTS_VOICE:-en-US-AvaNeural}"
+        local text="$*"
+        [ -z "$text" ] && text=$(cat)
+        local tmpfile
+        tmpfile=$(mktemp --suffix=.mp3)
+        edge-tts --voice "$voice" --text "$text" --write-media "$tmpfile" >/dev/null 2>&1 \
+            && ffplay -nodisp -autoexit -loglevel quiet "$tmpfile"
+        rm -f "$tmpfile"
+    }
+
+    # Read the clipboard aloud (copy text from a website, then run `sayclip`)
+    sayclip() {
+        if command -v wl-paste &>/dev/null; then
+            wl-paste | say
+        elif command -v xclip &>/dev/null; then
+            xclip -selection clipboard -o | say
+        else
+            echo "No clipboard tool found (wl-paste/xclip)"
+            return 1
+        fi
+    }
 fi

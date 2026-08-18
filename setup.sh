@@ -59,9 +59,9 @@ fi
 # Sudoers configuration
 # -----------------------------
 echo "[2/12] Configuring passwordless power commands..."
-echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/poweroff, /usr/bin/reboot, /usr/bin/systemctl suspend" | sudo tee /etc/sudoers.d/nopasswd-power > /dev/null
+echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/poweroff, /usr/bin/reboot, /usr/bin/systemctl suspend, /usr/bin/ddcutil" | sudo tee /etc/sudoers.d/nopasswd-power > /dev/null
 sudo chmod 440 /etc/sudoers.d/nopasswd-power
-echo "  ✓ Passwordless poweroff/reboot/suspend enabled"
+echo "  ✓ Passwordless poweroff/reboot/suspend/ddcutil (scr) enabled"
 
 # -----------------------------
 # System update

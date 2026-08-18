@@ -98,7 +98,9 @@ sudo dnf install -y \
     tar \
     fastfetch \
     flatpak \
-    ddcutil
+    ddcutil \
+    openssl-devel \
+    doxygen
 
 # -----------------------------
 # Remove default app bloat

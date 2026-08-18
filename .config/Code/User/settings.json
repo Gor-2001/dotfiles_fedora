@@ -27,5 +27,6 @@
             "path": "/bin/bash",
             "icon": "terminal-bash"
         }
-    }
+    },
+    "git.confirmSync": false
 }

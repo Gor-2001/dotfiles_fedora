@@ -305,11 +305,11 @@ fi
 # -----------------------------
 # Wallpaper
 # -----------------------------
-if [ -f "$DOTFILES_DIR/Fedora_43_default_wallpaper.png" ]; then
-    gsettings set org.gnome.desktop.background picture-uri "file://$DOTFILES_DIR/Fedora_43_default_wallpaper.png"
-    gsettings set org.gnome.desktop.background picture-uri-dark "file://$DOTFILES_DIR/Fedora_43_default_wallpaper.png"
+if [ -f "$DOTFILES_DIR/fedora_43_wallpaper.png" ]; then
+    gsettings set org.gnome.desktop.background picture-uri "file://$DOTFILES_DIR/fedora_43_wallpaper.png"
+    gsettings set org.gnome.desktop.background picture-uri-dark "file://$DOTFILES_DIR/fedora_43_wallpaper.png"
     gsettings set org.gnome.desktop.background picture-options 'zoom'
-    gsettings set org.gnome.desktop.screensaver picture-uri "file://$DOTFILES_DIR/Fedora_43_default_wallpaper.png"
+    gsettings set org.gnome.desktop.screensaver picture-uri "file://$DOTFILES_DIR/fedora_43_wallpaper.png"
     gsettings set org.gnome.desktop.screensaver picture-options 'zoom'
     echo "  ✓ Wallpaper and lock screen set"
 fi

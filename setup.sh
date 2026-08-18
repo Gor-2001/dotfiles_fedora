@@ -50,6 +50,9 @@ if command -v gsettings &>/dev/null; then
     else
         echo "  ✓ Armenian (phonetic) input source already configured"
     fi
+
+    gsettings set org.gnome.desktop.input-sources xkb-options "['caps:none']"
+    echo "  ✓ Caps Lock disabled"
 fi
 
 # -----------------------------

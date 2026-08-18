@@ -12,6 +12,7 @@ Personal development environment configuration for Fedora 44.
 - **Vim**: Basic configuration with sensible defaults
 - **Debloat**: Removes default GNOME/Fedora apps you likely won't use (LibreOffice, Contacts, Maps, Weather, Tour, Simple Scan, Malcontent Control, Characters, Fedora Media Writer, Video Player, Camera, Help, Clocks, System Monitor, Boxes, Calendar, Software, Connections)
 - **Apps**: Telegram Desktop via Flatpak
+- **Keyboard**: Caps Lock disabled
 
 ## Quick Start
 
